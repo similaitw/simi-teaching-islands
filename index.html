@@ -11,11 +11,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: 基地站 — a radar-style harbor map with the base at the center and four routes out to the islands, then a departure board listing each route */
+/* Layout: 3D 基地站 — a low-poly sea with the home base at the center and four islands on dashed sea routes; departure board below */
 :root{
   --sea:#e4eff1; --sea-line:#cddfe3; --paper:#fbfdfd; --ink:#17323a; --muted:#56717a; --rule:#d2e1e4;
   --base:#c0533a;
   --scratch:#d9821a; --ggb:#3b8756; --aia:#2c82b4; --py:#7657b2;
+  --sky:#cfe6ee; --ocean:#4f9fb5; --sand:#e9d6a8;
   --board:#14262c; --board-ink:#e8f1ee; --board-dim:#86a3a8; --board-rule:#26414a; --led:#f3c24b;
   --f-display:"Huninn","Noto Sans TC",system-ui,sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -24,46 +25,60 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
   --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --sky:#0b1a24; --ocean:#16475a; --sand:#b9a77c;
   --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}}
 :root[data-theme="dark"]{
   --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
   --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --sky:#0b1a24; --ocean:#16475a; --sand:#b9a77c;
   --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}
 
 body{background:var(--sea);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   background-image:linear-gradient(var(--sea-line) 1px,transparent 1px),linear-gradient(90deg,var(--sea-line) 1px,transparent 1px);
   background-size:48px 48px}
-.wrap{max-width:1080px;margin:0 auto;padding-block:36px 56px;display:grid;gap:28px}
+.wrap{max-width:1120px;margin:0 auto;padding-block:32px 56px;display:grid;gap:24px}
 
 header{display:grid;gap:6px}
 .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--base);text-transform:uppercase;font-weight:500}
 h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);line-height:1.15;margin:0;text-wrap:balance}
 .lede{margin:0;max-width:62ch;color:var(--muted)}
 
-/* ---------- map ---------- */
-.map{background:var(--paper);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-.map svg{display:block;width:100%;height:auto}
-.map text{font-family:var(--f-display);fill:var(--ink)}
-.map .mono{font-family:var(--f-mono);font-size:13px;fill:var(--muted);letter-spacing:.06em}
-.ring{fill:none;stroke:var(--rule);stroke-width:1}
-.route{fill:none;stroke-width:3;stroke-dasharray:10 9;opacity:.55;transition:opacity .2s,stroke-width .2s}
-.flow .route{animation:sail 1.6s linear infinite}
-@keyframes sail{to{stroke-dashoffset:-19}}
-.isle{cursor:pointer;outline:none}
-.isle .land{transition:transform .2s;transform-box:fill-box;transform-origin:center}
-.isle .halo{fill:none;stroke-width:2;opacity:0;transition:opacity .2s}
-.isle:hover .land,.isle:focus-visible .land{transform:scale(1.07)}
-.isle:hover .halo,.isle:focus-visible .halo{opacity:.9}
-.map[data-active] .route{opacity:.18}
-.map[data-active="scratch"] .route.scratch,.map[data-active="aia"] .route.aia,
-.map[data-active="py"] .route.py,.map[data-active="ggb"] .route.ggb{opacity:1;stroke-width:4}
-.sweep{transform-origin:500px 290px;animation:spin 6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 16px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
+/* ---------- 3D stage ---------- */
+.stage-wrap{border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--sky)}
+.stage{position:relative;height:clamp(440px,62vw,640px);touch-action:none;user-select:none;-webkit-user-select:none}
+.stage canvas{display:block;width:100%;height:100%;outline:none}
+.tags{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.tag{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;border:1.5px solid var(--c);background:var(--paper);color:var(--ink);
+  font-family:var(--f-display);font-size:15px;line-height:1.2;padding:5px 10px;border-radius:999px;white-space:nowrap;
+  display:flex;gap:6px;align-items:center;box-shadow:0 2px 8px rgb(0 0 0 / .12);transition:transform .15s}
+.tag i{font-style:normal;font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--c)}
+.tag.base{--c:var(--base)}
+.tag:hover,.tag.on{background:var(--c);color:var(--paper)}
+.tag:hover i,.tag.on i{color:var(--paper)}
+.tag:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tag[data-k="scratch"]{--c:var(--scratch)} .tag[data-k="aia"]{--c:var(--aia)}
+.tag[data-k="py"]{--c:var(--py)} .tag[data-k="ggb"]{--c:var(--ggb)}
+
+.panel{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;width:min(340px,calc(100% - 24px));background:var(--paper);
+  border:1px solid var(--rule);border-left:4px solid var(--c,var(--base));border-radius:8px;padding:14px 16px;display:grid;gap:8px;box-shadow:0 6px 24px rgb(0 0 0 / .15)}
+.panel .p-code{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;color:var(--c,var(--base));font-weight:600}
+.panel h3{margin:0;font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.2}
+.panel p{margin:0;font-size:14px;color:var(--muted)}
+.panel .p-acts{display:flex;gap:8px;flex-wrap:wrap}
+.pbtn{display:inline-flex;align-items:center;padding:7px 14px;border-radius:999px;font-size:14px;font-weight:500;text-decoration:none;
+  border:1.5px solid var(--c,var(--base));background:var(--c,var(--base));color:var(--paper);cursor:pointer;font-family:var(--f-body)}
+.pbtn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.pbtn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hud{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:12px;display:flex;gap:8px}
+.hud button{font:500 13px var(--f-body);background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;cursor:pointer}
+.hud button:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.hint{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 16px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted);background:var(--paper)}
+@media (max-width:560px){.tag{font-size:13px;padding:4px 8px}.panel{bottom:8px;padding:12px}.panel h3{font-size:19px}}
 
 /* ---------- departure board ---------- */
-.board{background:var(--board);color:var(--board-ink);border-radius:8px;overflow:hidden}
+.board{background:var(--board);color:var(--board-ink);border-radius:10px;overflow:hidden}
 .board-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--board-rule)}
 .board-head h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--board-ink)}
 .board-head .clock{font-family:var(--f-mono);font-size:13px;color:var(--led);letter-spacing:.08em;font-variant-numeric:tabular-nums}
@@ -92,103 +107,35 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);l
   .acts{justify-content:flex-start;padding-top:4px}
 }
 
-/* ---------- notes ---------- */
 .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
 .note{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;min-width:0}
 .note h3{margin:0 0 4px;font-family:var(--f-display);font-weight:400;font-size:18px}
 .note p{margin:0;color:var(--muted);font-size:14px}
 footer{font-size:13px;color:var(--muted)}
 footer a{color:var(--ink)}
-
-@media (prefers-reduced-motion:reduce){.flow .route,.sweep{animation:none}*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="wrap">
   <header>
     <div class="eyebrow">Home Base · 4 Routes · 4 Islands</div>
     <h1>Simi的教學群島基地站</h1>
-    <p class="lede">所有教學島都從這裡出航。點地圖上的島，或從下方出航看板選一條航線，直接登島學習。</p>
+    <p class="lede">所有教學島都從這裡出航。拖曳轉動海圖，點一座島看介紹，再按「登島」出發。</p>
   </header>
 
-  <figure class="map flow" id="map" style="margin:0">
-    <svg viewBox="0 0 1000 580" role="group" aria-label="基地站與四座教學島的航線圖">
-      <defs>
-        <radialGradient id="sweepGrad" cx="0" cy="0" r="1">
-          <stop offset="0" stop-color="var(--base)" stop-opacity=".35"/>
-          <stop offset="1" stop-color="var(--base)" stop-opacity="0"/>
-        </radialGradient>
-      </defs>
-      <!-- radar rings -->
-      <circle class="ring" cx="500" cy="290" r="90"/>
-      <circle class="ring" cx="500" cy="290" r="180"/>
-      <circle class="ring" cx="500" cy="290" r="270"/>
-      <line class="ring" x1="500" y1="10" x2="500" y2="570"/>
-      <line class="ring" x1="40" y1="290" x2="960" y2="290"/>
-      <path class="sweep" d="M500 290 L500 20 A270 270 0 0 1 690 99 Z" fill="url(#sweepGrad)"/>
-
-      <!-- routes from base -->
-      <path class="route scratch" stroke="var(--scratch)" d="M470 265 C 400 200, 300 180, 225 150"/>
-      <path class="route aia" stroke="var(--aia)" d="M530 265 C 600 200, 700 180, 775 150"/>
-      <path class="route py" stroke="var(--py)" d="M530 315 C 600 380, 700 400, 775 425"/>
-      <path class="route ggb" stroke="var(--ggb)" d="M470 315 C 400 380, 300 400, 225 425"/>
-
-      <!-- base -->
-      <g>
-        <circle cx="500" cy="290" r="44" fill="var(--paper)" stroke="var(--base)" stroke-width="3"/>
-        <path d="M500 262 l22 13 v26 l-22 13 l-22 -13 v-26z" fill="var(--base)"/>
-        <text x="500" y="296" text-anchor="middle" font-size="15" style="fill:var(--paper)">基地</text>
-        <text x="500" y="360" text-anchor="middle" class="mono">HOME BASE</text>
-      </g>
-
-      <!-- Scratch NW -->
-      <a class="isle" data-k="scratch" href="https://ldjh-scratch-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 Scratch 積木群島">
-        <circle class="halo" cx="165" cy="140" r="78" stroke="var(--scratch)"/>
-        <g class="land">
-          <path d="M105 140 q14 -48 64 -44 q52 4 58 38 q6 40 -60 46 q-68 6 -62 -40z" fill="var(--scratch)"/>
-          <path d="M140 150 q10 -16 26 -10 q14 -18 30 -4" fill="none" stroke="var(--paper)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-        </g>
-        <text x="165" y="68" text-anchor="middle" font-size="26">Scratch 積木群島</text>
-        <text x="165" y="222" text-anchor="middle" class="mono">A1 · 積木入門</text>
-      </a>
-
-      <!-- App Inventor NE -->
-      <a class="isle" data-k="aia" href="https://ldjh-appinventor-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 App Inventor 教學島">
-        <circle class="halo" cx="835" cy="140" r="78" stroke="var(--aia)"/>
-        <g class="land">
-          <path d="M775 140 q16 -46 62 -42 q50 4 56 36 q4 42 -58 46 q-66 4 -60 -40z" fill="var(--aia)"/>
-          <rect x="822" y="118" width="24" height="40" rx="5" fill="none" stroke="var(--paper)" stroke-width="3" opacity=".75"/>
-        </g>
-        <text x="835" y="68" text-anchor="middle" font-size="26">App Inventor 教學島</text>
-        <text x="835" y="222" text-anchor="middle" class="mono">A2 · 手機 App</text>
-      </a>
-
-      <!-- Python SE (floating) -->
-      <a class="isle" data-k="py" href="https://ldjh-python-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 Python 教學島">
-        <circle class="halo" cx="835" cy="440" r="78" stroke="var(--py)"/>
-        <g class="land">
-          <path d="M775 430 q10 -38 58 -36 q50 2 58 34 q2 14 -22 16 l-34 44 l-28 -42 q-34 -2 -32 -16z" fill="var(--py)"/>
-          <text x="833" y="440" text-anchor="middle" font-size="22" style="fill:var(--paper);font-family:var(--f-mono)">&gt;_</text>
-        </g>
-        <text x="835" y="530" text-anchor="middle" font-size="26">Python 教學島</text>
-        <text x="835" y="556" text-anchor="middle" class="mono">A3 · 天空之城</text>
-      </a>
-
-      <!-- GGB SW -->
-      <a class="isle" data-k="ggb" href="https://ldjh-ggb-math-island.vercel.app" target="_blank" rel="noopener" aria-label="前往 GGB 數學島">
-        <circle class="halo" cx="165" cy="440" r="78" stroke="var(--ggb)"/>
-        <g class="land">
-          <path d="M105 440 q12 -46 62 -42 q52 4 58 36 q4 42 -58 46 q-68 4 -62 -40z" fill="var(--ggb)"/>
-          <path d="M140 460 L170 418 L200 460 Z" fill="none" stroke="var(--paper)" stroke-width="3" stroke-linejoin="round" opacity=".75"/>
-        </g>
-        <text x="165" y="530" text-anchor="middle" font-size="26">GGB 數學島</text>
-        <text x="165" y="556" text-anchor="middle" class="mono">B1 · 數學支線</text>
-      </a>
-    </svg>
-    <figcaption class="legend">
-      <span>程式航線 A1 → A2 → A3：積木 → 手機 App → 文字程式</span>
-      <span>數學支線 B1：用 GeoGebra 從幾何學代數</span>
-    </figcaption>
-  </figure>
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <div class="tags" id="tags"></div>
+      <div class="hud"><button type="button" id="homeBtn">回到基地</button><button type="button" id="spinBtn">暫停旋轉</button></div>
+      <div class="panel" id="panel">
+        <div class="p-code" id="pCode">HOME BASE</div>
+        <h3 id="pName">基地站</h3>
+        <p id="pDesc">四條航線從這裡出發。點任一座島，看它教什麼、適合誰。</p>
+        <div class="p-acts" id="pActs"></div>
+      </div>
+    </div>
+    <div class="hint"><span>拖曳：旋轉視角</span><span>滾輪／雙指：縮放</span><span>點島或島名：查看並登島</span></div>
+  </div>
 
   <section class="board" aria-labelledby="board-title">
     <div class="board-head">
@@ -248,27 +195,330 @@ footer a{color:var(--ink)}
   <footer>基地站網址：<a href="https://similaitw.github.io/simi-teaching-islands/" target="_blank" rel="noopener">similaitw.github.io/simi-teaching-islands</a>・四座島部署於 Vercel，原始碼在 GitHub similaitw。</footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 (function(){
-  var map=document.getElementById('map');
+  var ISLANDS={
+    scratch:{code:'A1 · 程式航線',name:'Scratch 積木群島',desc:'3D 跳島，一島學一類積木。給 7 年級、還沒學過文字程式的學生。',url:'https://ldjh-scratch-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-scratch-islands',pos:[-13,0,-9]},
+    aia:{code:'A2 · 程式航線',name:'App Inventor 教學島',desc:'用積木做手機 App。站內有模擬工作區，也能下載 .aia 範例匯入練習。',url:'https://ldjh-appinventor-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-appinventor-islands',pos:[13,0,-9]},
+    py:{code:'A3 · 程式航線',name:'Python 教學島',desc:'天空之城風格的浮空島。在瀏覽器裡直接寫、直接跑 Python，免安裝。',url:'https://ldjh-python-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-python-islands',pos:[13,4,9]},
+    ggb:{code:'B1 · 數學支線',name:'GGB 數學島',desc:'用 GeoGebra 透過幾何作圖理解代數，給國中資優班自學。',url:'https://ldjh-ggb-math-island.vercel.app',repo:'https://github.com/similaitw/ldjh-ggb-math-island',pos:[-13,0,9]}
+  };
+  var KEYS=['scratch','aia','py','ggb'];
+  var stage=document.getElementById('stage'), tagsEl=document.getElementById('tags');
   var rows=document.querySelectorAll('.row');
-  function light(k){
-    if(k){map.setAttribute('data-active',k)}else{map.removeAttribute('data-active')}
-    rows.forEach(function(r){r.classList.toggle('lit',r.getAttribute('data-k')===k)});
-  }
-  document.querySelectorAll('.isle,.row').forEach(function(el){
-    var k=el.getAttribute('data-k');
-    el.addEventListener('mouseenter',function(){light(k)});
-    el.addEventListener('mouseleave',function(){light(null)});
-    el.addEventListener('focusin',function(){light(k)});
-    el.addEventListener('focusout',function(){light(null)});
-  });
+  var pCode=document.getElementById('pCode'),pName=document.getElementById('pName'),pDesc=document.getElementById('pDesc'),pActs=document.getElementById('pActs'),panel=document.getElementById('panel');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  function isDark(){var t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia('(prefers-color-scheme: dark)').matches}
+
+  /* clock */
   var clock=document.getElementById('clock');
-  function tick(){
-    var d=new Date();
-    clock.textContent='基地時間 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  function tick(){var d=new Date();clock.textContent='基地時間 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+  tick();setInterval(tick,15000);
+
+  /* panel + board highlight (works even without WebGL) */
+  var selected=null, hovered=null;
+  function lightRows(k){rows.forEach(function(r){r.classList.toggle('lit',r.getAttribute('data-k')===k)})}
+  function showPanel(k){
+    pActs.innerHTML='';
+    if(!k){panel.style.removeProperty('--c');pCode.textContent='HOME BASE';pName.textContent='基地站';pDesc.textContent='四條航線從這裡出發。點任一座島，看它教什麼、適合誰。';return}
+    var d=ISLANDS[k];
+    panel.style.setProperty('--c','var(--'+k+')');
+    pCode.textContent=d.code;pName.textContent=d.name;pDesc.textContent=d.desc;
+    var a=document.createElement('a');a.className='pbtn';a.href=d.url;a.target='_blank';a.rel='noopener';a.textContent='登島 →';
+    var s=document.createElement('a');s.className='pbtn ghost';s.href=d.repo;s.target='_blank';s.rel='noopener';s.textContent='原始碼';
+    pActs.appendChild(a);pActs.appendChild(s);
   }
-  tick(); setInterval(tick,15000);
+  rows.forEach(function(r){var k=r.getAttribute('data-k');
+    r.addEventListener('mouseenter',function(){hovered=k;lightRows(k)});
+    r.addEventListener('mouseleave',function(){hovered=null;lightRows(selected)});
+  });
+
+  /* tags (HTML labels) */
+  var tags={};
+  function mkTag(k,label,code){
+    var b=document.createElement('button');b.type='button';b.className='tag'+(k==='base'?' base':'');b.setAttribute('data-k',k);
+    b.innerHTML='<i>'+code+'</i>'+label;tagsEl.appendChild(b);tags[k]=b;return b;
+  }
+  mkTag('base','基地站','HQ');
+  mkTag('scratch','Scratch 積木群島','A1');mkTag('aia','App Inventor 教學島','A2');
+  mkTag('py','Python 教學島','A3');mkTag('ggb','GGB 數學島','B1');
+
+  if(!window.THREE){fail();return}
+  var renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){fail();return}
+  function fail(){var f=document.createElement('div');f.className='fallback';f.textContent='這台裝置無法顯示 3D 場景，請直接使用下方的出航看板登島。';stage.insertBefore(f,stage.firstChild);
+    Object.keys(tags).forEach(function(k){tags[k].hidden=true});document.querySelector('.hud').hidden=true;}
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  stage.insertBefore(renderer.domElement,stage.firstChild);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(42,1,0.1,400);
+  var HOME_POS=new THREE.Vector3(0,26,38), HOME_TGT=new THREE.Vector3(0,1.5,0);
+  camera.position.copy(HOME_POS);
+
+  var controls=null;
+  if(THREE.OrbitControls){
+    controls=new THREE.OrbitControls(camera,renderer.domElement);
+    controls.target.copy(HOME_TGT);controls.enableDamping=true;controls.dampingFactor=.08;
+    controls.enablePan=false;controls.minDistance=14;controls.maxDistance=70;controls.maxPolarAngle=1.38;
+    controls.autoRotate=!reduce;controls.autoRotateSpeed=.45;
+  }else{camera.lookAt(HOME_TGT)}
+
+  /* lights */
+  var hemi=new THREE.HemisphereLight(0xffffff,0x335566,.85);scene.add(hemi);
+  var sun=new THREE.DirectionalLight(0xffffff,.9);sun.position.set(-18,30,14);sun.castShadow=true;
+  sun.shadow.mapSize.set(2048,2048);var sc=sun.shadow.camera;sc.left=-30;sc.right=30;sc.top=30;sc.bottom=-30;sc.near=1;sc.far=90;
+  scene.add(sun);
+  var beacon=new THREE.PointLight(0xffd27a,0,30);beacon.position.set(0,9.6,0);scene.add(beacon);
+
+  function std(c,o){o=o||{};return new THREE.MeshStandardMaterial(Object.assign({color:c,flatShading:true,roughness:.85,metalness:0},o))}
+  function shadowy(m){m.castShadow=true;m.receiveShadow=true;return m}
+
+  /* ocean */
+  var oceanGeo=new THREE.PlaneGeometry(200,200,90,90);
+  var oceanMat=std(0x4f9fb5,{roughness:.55,transparent:true,opacity:.96});
+  var ocean=new THREE.Mesh(oceanGeo,oceanMat);ocean.rotation.x=-Math.PI/2;ocean.receiveShadow=true;scene.add(ocean);
+  var opos=oceanGeo.attributes.position, obase=opos.array.slice();
+  function waves(t){
+    for(var i=0;i<opos.count;i++){var x=obase[i*3],y=obase[i*3+1];
+      opos.array[i*3+2]=Math.sin(x*.22+t*.9)*.22+Math.cos(y*.27+t*.7)*.18;}
+    opos.needsUpdate=true;oceanGeo.computeVertexNormals();
+  }
+  waves(0);
+
+  /* radar rings on water */
+  var ringMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.28,side:THREE.DoubleSide});
+  [8,15,22].forEach(function(r){var g=new THREE.RingGeometry(r-.06,r+.06,96);var m=new THREE.Mesh(g,ringMat);m.rotation.x=-Math.PI/2;m.position.y=.45;scene.add(m)});
+
+  /* shared island pieces */
+  var sandMat=std(0xe9d6a8), rockMat=std(0x7d8a86), darkRock=std(0x6b5f55);
+  function islandBase(accent,rTop,rBot,h){
+    var g=new THREE.Group();
+    var rock=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(rTop,rBot,h,8),rockMat));rock.position.y=h/2-1;g.add(rock);
+    var sand=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(rTop+.5,rTop+.7,.5,8),sandMat));sand.position.y=h-1.05;g.add(sand);
+    var top=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(rTop-.2,rTop+.1,.45,8),std(accent)));top.position.y=h-.65;g.add(top);
+    for(var i=0;i<5;i++){var s=.4+Math.random()*.5;var r=shadowy(new THREE.Mesh(new THREE.DodecahedronGeometry(s,0),rockMat));
+      var a=i/5*Math.PI*2+Math.random();r.position.set(Math.cos(a)*(rTop+1.1),.1,Math.sin(a)*(rTop+1.1));g.add(r)}
+    g.userData.topY=h-.42;return g;
+  }
+  function tree(h){var g=new THREE.Group();var t=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.12,.16,h*.4,5),darkRock));t.position.y=h*.2;g.add(t);
+    var c=shadowy(new THREE.Mesh(new THREE.ConeGeometry(h*.32,h*.8,6),std(0x3f8a4f)));c.position.y=h*.7;g.add(c);return g}
+
+  var islandGroups={}, pickables=[], accentMats={};
+
+  /* base station */
+  var base=new THREE.Group();scene.add(base);
+  var bIsle=islandBase(0xc0533a,4.6,5.4,2.2);base.add(bIsle);accentMats.base=bIsle.children[2].material;
+  var deck=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(3.4,3.4,.35,6),std(0xd9d4c8)));deck.position.y=bIsle.userData.topY+.2;base.add(deck);
+  var towerMat=std(0xf4f1ea), stripeMat=std(0xc0533a);
+  var ty=deck.position.y+.15;
+  for(var s=0;s<4;s++){var seg=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.95-s*.12,1.05-s*.12,1.4,10),s%2?stripeMat:towerMat));seg.position.y=ty+.7+s*1.4;base.add(seg)}
+  var lantern=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,.8,10),std(0xffe4a0,{emissive:0xffc24a,emissiveIntensity:.6}));lantern.position.y=ty+6.1;base.add(lantern);
+  var cap=shadowy(new THREE.Mesh(new THREE.ConeGeometry(.75,.8,10),stripeMat));cap.position.y=ty+6.9;base.add(cap);
+  beacon.position.y=ty+6.1;
+  var beamGeo=new THREE.ConeGeometry(1.6,12,16,1,true);beamGeo.translate(0,-6,0);beamGeo.rotateZ(Math.PI/2);
+  var beam=new THREE.Mesh(beamGeo,new THREE.MeshBasicMaterial({color:0xffe08a,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide}));
+  var beamPivot=new THREE.Group();beamPivot.position.y=ty+6.1;beamPivot.add(beam);base.add(beamPivot);
+  var radar=new THREE.Group();radar.position.set(2.2,deck.position.y+.2,1.2);base.add(radar);
+  var mast=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,1.6,6),rockMat));mast.position.y=.8;radar.add(mast);
+  var dish=shadowy(new THREE.Mesh(new THREE.SphereGeometry(.8,10,6,0,Math.PI*2,0,Math.PI/2.4),std(0xdfe6e6,{side:THREE.DoubleSide})));
+  dish.rotation.x=-1.1;dish.position.y=1.7;var dishPivot=new THREE.Group();dishPivot.add(dish);radar.add(dishPivot);
+  var flagPole=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,2.4,5),rockMat));flagPole.position.set(-2.3,deck.position.y+1.3,-1);base.add(flagPole);
+  var flag=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.65,4,1),std(0xc0533a,{side:THREE.DoubleSide}));flag.position.set(-1.72,deck.position.y+2.15,-1);base.add(flag);
+  var flagBase=flag.geometry.attributes.position.array.slice();
+  var dockA=shadowy(new THREE.Mesh(new THREE.BoxGeometry(1.2,.25,3.2),std(0x8a6a4a)));dockA.position.set(0,.55,5.6);base.add(dockA);
+  base.userData.key='base';
+
+  /* islands */
+  function mkScratch(){
+    var g=islandBase(0xd9821a,3.2,3.9,1.9), y=g.userData.topY;
+    var cols=[0x4c97ff,0x9966ff,0xffbf00,0xffab19,0x59c059,0xff8c1a];
+    for(var i=0;i<6;i++){var b=shadowy(new THREE.Mesh(new THREE.BoxGeometry(1.7,.48,1.0),std(cols[i])));
+      b.position.set(-.6+(i%2)*.35,y+.24+i*.5,.2-(i%3)*.12);b.rotation.y=(i%2?.12:-.08);g.add(b);
+      var n=shadowy(new THREE.Mesh(new THREE.BoxGeometry(.4,.12,.4),std(cols[i])));n.position.set(b.position.x-.35,b.position.y+.3,b.position.z);g.add(n)}
+    var t1=tree(1.8);t1.position.set(1.8,y,1);g.add(t1);var t2=tree(1.4);t2.position.set(1.6,y,-1.3);g.add(t2);
+    return g;
+  }
+  function mkAia(){
+    var g=islandBase(0x2c82b4,3.2,3.9,1.9), y=g.userData.topY;
+    var phone=shadowy(new THREE.Mesh(new THREE.BoxGeometry(1.9,3.6,.35),std(0x22303a)));phone.position.set(0,y+1.9,0);phone.rotation.y=.35;g.add(phone);
+    var scr=new THREE.Mesh(new THREE.PlaneGeometry(1.6,2.9),std(0x7fd0ff,{emissive:0x3aa7e6,emissiveIntensity:.55,flatShading:false}));
+    scr.position.set(0,0,.18);phone.add(scr);
+    var appCols=[0xffbf00,0x59c059,0xff6680,0x9966ff];
+    appCols.forEach(function(c,i){var a=new THREE.Mesh(new THREE.BoxGeometry(.42,.42,.05),std(c,{emissive:c,emissiveIntensity:.25}));a.position.set(-.35+(i%2)*.7,.7-Math.floor(i/2)*.7,.22);phone.add(a)});
+    var ant=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,1.2,5),rockMat));ant.position.set(1.9,y+.6,-1);g.add(ant);
+    var t1=tree(1.5);t1.position.set(-1.9,y,1.1);g.add(t1);
+    return g;
+  }
+  function mkPy(){
+    var g=new THREE.Group();
+    var under=shadowy(new THREE.Mesh(new THREE.ConeGeometry(3.6,5,8),darkRock));under.rotation.x=Math.PI;under.position.y=-2.5;g.add(under);
+    var top=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(3.4,3.6,.6,8),std(0x7657b2)));top.position.y=.3;g.add(top);
+    var grass=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(3.0,3.4,.3,8),std(0x5c9a5a)));grass.position.y=.75;g.add(grass);
+    var keep=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.8,.9,2.6,8),std(0xe8e2d4)));keep.position.set(-.4,2.2,-.3);g.add(keep);
+    var roof=shadowy(new THREE.Mesh(new THREE.ConeGeometry(1.05,1.2,8),std(0x7657b2)));roof.position.set(-.4,4.1,-.3);g.add(roof);
+    var keep2=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.5,.55,1.6,8),std(0xe8e2d4)));keep2.position.set(1.1,1.7,.6);g.add(keep2);
+    var roof2=shadowy(new THREE.Mesh(new THREE.ConeGeometry(.7,.9,8),std(0x7657b2)));roof2.position.set(1.1,2.95,.6);g.add(roof2);
+    var t1=tree(1.4);t1.position.set(1.8,.9,-1.4);g.add(t1);var t2=tree(1.1);t2.position.set(-2,.9,1.3);g.add(t2);
+    for(var i=0;i<4;i++){var r=shadowy(new THREE.Mesh(new THREE.DodecahedronGeometry(.45+Math.random()*.3,0),darkRock));var a=i*1.6;
+      r.position.set(Math.cos(a)*4.6,-1.5-i*.6,Math.sin(a)*4.6);r.userData.float=i;g.add(r)}
+    var vine=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,3,4),std(0x3f8a4f));vine.position.set(2.4,-1.2,1.6);g.add(vine);
+    g.userData.topY=.9;return g;
+  }
+  function mkGgb(){
+    var g=islandBase(0x3b8756,3.2,3.9,1.9), y=g.userData.topY;
+    var pyr=shadowy(new THREE.Mesh(new THREE.ConeGeometry(1.2,2.2,4),std(0xf2efe6)));pyr.position.set(-.9,y+1.1,-.4);pyr.rotation.y=.6;g.add(pyr);
+    var sph=shadowy(new THREE.Mesh(new THREE.IcosahedronGeometry(.75,1),std(0x99c46a)));sph.position.set(1,y+.75,.6);g.add(sph);
+    var cube=shadowy(new THREE.Mesh(new THREE.BoxGeometry(.9,.9,.9),std(0x5aa8d8)));cube.position.set(.9,y+.45,-1.3);cube.rotation.y=.5;g.add(cube);
+    var torus=new THREE.Mesh(new THREE.TorusGeometry(.55,.12,6,16),std(0xffbf00));torus.position.set(-.2,y+2.9,.9);g.add(torus);g.userData.spin=torus;
+    var axMat=new THREE.LineBasicMaterial({color:0x17323a});
+    [[2.6,0,0],[0,2.6,0],[0,0,2.6]].forEach(function(v){var geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(v[0],v[1],v[2])]);
+      var l=new THREE.Line(geo,axMat);l.position.set(-1.9,y+.02,1.4);g.add(l)});
+    return g;
+  }
+  var makers={scratch:mkScratch,aia:mkAia,py:mkPy,ggb:mkGgb};
+  KEYS.forEach(function(k){
+    var g=makers[k]();var p=ISLANDS[k].pos;g.position.set(p[0],p[1],p[2]);g.userData.key=k;g.userData.home=g.position.clone();
+    scene.add(g);islandGroups[k]=g;
+  });
+  islandGroups.base=base;
+
+  /* routes + boats */
+  var routes={};
+  KEYS.forEach(function(k){
+    var p=ISLANDS[k].pos, end=new THREE.Vector3(p[0],0,p[2]);
+    var dir=end.clone().normalize();
+    var a=dir.clone().multiplyScalar(5.6);a.y=.6;
+    var b=end.clone().sub(dir.clone().multiplyScalar(4.8));b.y=k==='py'?p[1]-.2:.6;
+    var mid=a.clone().lerp(b,.5);mid.y=k==='py'?3.6:1.4;
+    var side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(k==='aia'||k==='ggb'?-1.6:1.6);mid.add(side);
+    var curve=new THREE.QuadraticBezierCurve3(a,mid,b);
+    var geo=new THREE.BufferGeometry().setFromPoints(curve.getPoints(60));
+    var mat=new THREE.LineDashedMaterial({color:0xffffff,dashSize:.7,gapSize:.5,transparent:true,opacity:.75});
+    var line=new THREE.Line(geo,mat);line.computeLineDistances();scene.add(line);
+    var boats=[];
+    for(var i=0;i<2;i++){
+      var boat=new THREE.Group();
+      var hull=shadowy(new THREE.Mesh(new THREE.BoxGeometry(.5,.28,1.1),std(0xf4f1ea)));boat.add(hull);
+      var sail=new THREE.Mesh(new THREE.ConeGeometry(.35,.9,3),std(0xffffff));sail.position.y=.55;boat.add(sail);
+      boat.userData.off=i*.5;boat.userData.dir=i?-1:1;scene.add(boat);boats.push(boat);
+    }
+    routes[k]={line:line,mat:mat,curve:curve,boats:boats};
+  });
+
+  /* theme colors */
+  function applyTheme(){
+    var dark=isDark(), sky=new THREE.Color(css('--sky')||'#cfe6ee');
+    renderer.setClearColor(sky,1);scene.fog=new THREE.Fog(sky,60,150);
+    oceanMat.color.set(css('--ocean')||'#4f9fb5');sandMat.color.set(css('--sand')||'#e9d6a8');
+    hemi.intensity=dark?.45:.85;sun.intensity=dark?.35:.9;sun.color.set(dark?0x9fb6ff:0xffffff);
+    beacon.intensity=dark?2.2:0;beam.material.opacity=dark?.18:0;lantern.material.emissiveIntensity=dark?1.4:.6;
+    ringMat.opacity=dark?.14:.28;
+    KEYS.forEach(function(k){routes[k].mat.color.set(css('--'+k))});
+  }
+  applyTheme();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
+  new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+  /* sizing */
+  function resize(){var w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;
+    var narrow=w<600;camera.fov=narrow?55:42;camera.updateProjectionMatrix()}
+  resize();
+  if(window.ResizeObserver)new ResizeObserver(resize).observe(stage);else window.addEventListener('resize',resize);
+
+  /* picking */
+  var ray=new THREE.Raycaster(), mouse=new THREE.Vector2();
+  function keyAt(ev){
+    var r=renderer.domElement.getBoundingClientRect();mouse.x=(ev.clientX-r.left)/r.width*2-1;mouse.y=-(ev.clientY-r.top)/r.height*2+1;
+    ray.setFromCamera(mouse,camera);
+    var hits=ray.intersectObjects(Object.keys(islandGroups).map(function(k){return islandGroups[k]}),true);
+    for(var i=0;i<hits.length;i++){var o=hits[i].object;while(o&&!o.userData.key)o=o.parent;if(o)return o.userData.key}
+    return null;
+  }
+  var down=null;
+  renderer.domElement.addEventListener('pointermove',function(ev){
+    if(ev.pointerType!=='mouse')return;
+    var k=keyAt(ev);if(k==='base')k=null;
+    hovered=k;renderer.domElement.style.cursor=(k||keyAt(ev)==='base')?'pointer':'grab';lightRows(k||selected);
+  });
+  renderer.domElement.addEventListener('pointerleave',function(){hovered=null;lightRows(selected)});
+  renderer.domElement.addEventListener('pointerdown',function(ev){down=[ev.clientX,ev.clientY]});
+  renderer.domElement.addEventListener('pointerup',function(ev){
+    if(!down)return;var moved=Math.hypot(ev.clientX-down[0],ev.clientY-down[1]);down=null;if(moved>6)return;
+    var k=keyAt(ev);if(k)select(k==='base'?null:k);
+  });
+  Object.keys(tags).forEach(function(k){tags[k].addEventListener('click',function(){select(k==='base'?null:k)})});
+
+  /* camera fly */
+  var fly=null, spinning=!reduce;
+  function flyTo(pos,tgt){fly={p0:camera.position.clone(),t0:(controls?controls.target:HOME_TGT).clone(),p1:pos,t1:tgt,s:performance.now()}}
+  function select(k){
+    selected=k;showPanel(k);lightRows(k);
+    Object.keys(tags).forEach(function(t){tags[t].classList.toggle('on',t===(k||''))});
+    if(!k){flyTo(HOME_POS.clone(),HOME_TGT.clone());setSpin(!reduce);return}
+    var g=islandGroups[k], c=g.userData.home.clone();
+    var out=new THREE.Vector3(c.x,0,c.z).normalize();
+    var tgt=c.clone();tgt.y+=1.5;
+    var pos=c.clone().add(out.multiplyScalar(13));pos.y=c.y+11;
+    flyTo(pos,tgt);setSpin(false);
+  }
+  var spinBtn=document.getElementById('spinBtn');
+  function setSpin(on){spinning=on;if(controls)controls.autoRotate=on;spinBtn.textContent=on?'暫停旋轉':'開始旋轉'}
+  setSpin(!reduce);
+  spinBtn.addEventListener('click',function(){setSpin(!spinning)});
+  document.getElementById('homeBtn').addEventListener('click',function(){select(null)});
+  if(controls)controls.addEventListener('start',function(){fly=null});
+
+  /* label projection */
+  var tmp=new THREE.Vector3();
+  function placeTags(){
+    var w=stage.clientWidth,h=stage.clientHeight;
+    Object.keys(tags).forEach(function(k){
+      var g=islandGroups[k];tmp.copy(g.position);tmp.y+=(k==='base'?10.4:k==='py'?6.2:5.4);
+      tmp.project(camera);var el=tags[k];
+      if(tmp.z>1){el.style.visibility='hidden';return}
+      el.style.visibility='visible';
+      el.style.transform='translate('+((tmp.x*.5+.5)*w)+'px,'+((-tmp.y*.5+.5)*h)+'px) translate(-50%,-100%)';
+    });
+  }
+
+  /* loop */
+  var clockT=new THREE.Clock(), scaleV=new THREE.Vector3();
+  function frame(){
+    var t=clockT.getElapsedTime(), anim=!reduce;
+    if(anim){waves(t);
+      dishPivot.rotation.y=t*1.2;beamPivot.rotation.y=t*.8;
+      var fp=flag.geometry.attributes.position;for(var i=0;i<fp.count;i++){var x=flagBase[i*3];fp.array[i*3+2]=Math.sin(x*4+t*5)*.08*(x+.55)}fp.needsUpdate=true;
+      var py=islandGroups.py;py.position.y=py.userData.home.y+Math.sin(t*.8)*.35;
+      py.children.forEach(function(c){if(c.userData.float!==undefined)c.position.y+=Math.sin(t*1.3+c.userData.float)*.004});
+      if(islandGroups.ggb.userData.spin)islandGroups.ggb.userData.spin.rotation.y=t*1.2;
+    }
+    KEYS.forEach(function(k){
+      var R=routes[k], on=(hovered===k||selected===k), dim=(hovered||selected)&&!on;
+      R.mat.opacity=dim?.25:on?1:.75;
+      R.boats.forEach(function(b){
+        var u=anim?((t*.06+b.userData.off)%1):(.3+b.userData.off*.4);if(b.userData.dir<0)u=1-u;
+        var p=R.curve.getPointAt(u);b.position.copy(p);if(k!=='py')b.position.y=Math.max(p.y,.35)+(anim?Math.sin(t*2+u*9)*.06:0);
+        var tan=R.curve.getTangentAt(u);if(b.userData.dir<0)tan.negate();b.rotation.y=Math.atan2(tan.x,tan.z);
+        b.visible=!dim;
+      });
+      var g=islandGroups[k], s=on?1.07:1;scaleV.set(s,s,s);g.scale.lerp(scaleV,.15);
+    });
+    if(fly){var e=Math.min((performance.now()-fly.s)/1100,1),q=e<.5?2*e*e:1-Math.pow(-2*e+2,2)/2;
+      camera.position.lerpVectors(fly.p0,fly.p1,q);
+      if(controls)controls.target.lerpVectors(fly.t0,fly.t1,q);else camera.lookAt(fly.t1);
+      if(e>=1)fly=null;}
+    if(controls)controls.update();
+    renderer.render(scene,camera);placeTags();
+    requestAnimationFrame(frame);
+  }
+  frame();
 })();
 </script>
 
