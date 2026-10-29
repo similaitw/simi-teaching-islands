@@ -1,10 +1,10 @@
-# Simi的教學群島整理
+# Simi的教學群島基地站
 
 ## 👉 [點這裡進入網站](https://similaitw.github.io/simi-teaching-islands/)
 
 **https://similaitw.github.io/simi-teaching-islands/**
 
-四座自學網站的入口頁：
+所有教學島從這個基地站出航，四條航線連到四座群島：
 
 | 島嶼 | 工具 | 網站 |
 |---|---|---|

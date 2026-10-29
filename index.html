@@ -6,227 +6,271 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
 <body>
-<title>Simi的教學群島整理</title>
+<title>Simi的教學群島基地站</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: 海圖 — a chart of the archipelago up top, then one "島嶼登錄卡" per island along the suggested route */
+/* Layout: 基地站 — a radar-style harbor map with the base at the center and four routes out to the islands, then a departure board listing each route */
 :root{
-  --sea:#e6f0f2; --sea-line:#c9dde1; --paper:#fbfdfd; --ink:#17323a; --muted:#56717a;
-  --rule:#d4e2e5;
-  --scratch:#e08a1e; --ggb:#3e8a5a; --aia:#2f86b8; --py:#7a5bb5;
-  --route:#b0503a;
+  --sea:#e4eff1; --sea-line:#cddfe3; --paper:#fbfdfd; --ink:#17323a; --muted:#56717a; --rule:#d2e1e4;
+  --base:#c0533a;
+  --scratch:#d9821a; --ggb:#3b8756; --aia:#2c82b4; --py:#7657b2;
+  --board:#14262c; --board-ink:#e8f1ee; --board-dim:#86a3a8; --board-rule:#26414a; --led:#f3c24b;
   --f-display:"Huninn","Noto Sans TC",system-ui,sans-serif;
   --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --sea:#0f2128; --sea-line:#1c3640; --paper:#132830; --ink:#e3eef0; --muted:#93adb4; --rule:#24414b;
-  --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0; --route:#e2876f; color-scheme:dark}}
+  --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
+  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --sea:#0f2128; --sea-line:#1c3640; --paper:#132830; --ink:#e3eef0; --muted:#93adb4; --rule:#24414b;
-  --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0; --route:#e2876f; color-scheme:dark}
+  --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
+  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}
 
 body{background:var(--sea);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   background-image:linear-gradient(var(--sea-line) 1px,transparent 1px),linear-gradient(90deg,var(--sea-line) 1px,transparent 1px);
-  background-size:48px 48px;}
-.wrap{max-width:1040px;margin:0 auto;padding-block:40px 56px;display:grid;gap:32px}
+  background-size:48px 48px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:36px 56px;display:grid;gap:28px}
 
 header{display:grid;gap:6px}
-.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
-h1{font-family:var(--f-display);font-weight:400;font-size:clamp(32px,6vw,52px);line-height:1.15;margin:0;text-wrap:balance}
-.lede{margin:0;max-width:60ch;color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;color:var(--base);text-transform:uppercase;font-weight:500}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);line-height:1.15;margin:0;text-wrap:balance}
+.lede{margin:0;max-width:62ch;color:var(--muted)}
 
-.chart{background:var(--paper);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
-.chart svg{display:block;width:100%;height:auto}
-.chart text{font-family:var(--f-display);fill:var(--ink)}
-.chart .small{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
-.legend{display:flex;flex-wrap:wrap;gap:8px 20px;padding:10px 16px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
-.legend span{display:inline-flex;align-items:center;gap:8px}
-.legend i{display:inline-block;width:22px;border-top:2px dashed var(--route)}
-.legend i.solid{border-top:2px dotted var(--ggb)}
+/* ---------- map ---------- */
+.map{background:var(--paper);border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.map svg{display:block;width:100%;height:auto}
+.map text{font-family:var(--f-display);fill:var(--ink)}
+.map .mono{font-family:var(--f-mono);font-size:13px;fill:var(--muted);letter-spacing:.06em}
+.ring{fill:none;stroke:var(--rule);stroke-width:1}
+.route{fill:none;stroke-width:3;stroke-dasharray:10 9;opacity:.55;transition:opacity .2s,stroke-width .2s}
+.flow .route{animation:sail 1.6s linear infinite}
+@keyframes sail{to{stroke-dashoffset:-19}}
+.isle{cursor:pointer;outline:none}
+.isle .land{transition:transform .2s;transform-box:fill-box;transform-origin:center}
+.isle .halo{fill:none;stroke-width:2;opacity:0;transition:opacity .2s}
+.isle:hover .land,.isle:focus-visible .land{transform:scale(1.07)}
+.isle:hover .halo,.isle:focus-visible .halo{opacity:.9}
+.map[data-active] .route{opacity:.18}
+.map[data-active="scratch"] .route.scratch,.map[data-active="aia"] .route.aia,
+.map[data-active="py"] .route.py,.map[data-active="ggb"] .route.ggb{opacity:1;stroke-width:4}
+.sweep{transform-origin:500px 290px;animation:spin 6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;padding:10px 16px;border-top:1px solid var(--rule);font-size:13px;color:var(--muted)}
 
-h2{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0}
-.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.section-head p{margin:0;color:var(--muted);font-size:13px}
+/* ---------- departure board ---------- */
+.board{background:var(--board);color:var(--board-ink);border-radius:8px;overflow:hidden}
+.board-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--board-rule)}
+.board-head h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:22px;color:var(--board-ink)}
+.board-head .clock{font-family:var(--f-mono);font-size:13px;color:var(--led);letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.rows{display:grid}
+.row{display:grid;grid-template-columns:64px minmax(0,1.5fr) minmax(0,1fr) minmax(0,1.2fr) auto;gap:14px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--board-rule);transition:background .2s}
+.row:last-child{border-bottom:none}
+.row.lit{background:color-mix(in srgb,var(--c) 18%,transparent)}
+.row[data-k="scratch"]{--c:var(--scratch)} .row[data-k="aia"]{--c:var(--aia)}
+.row[data-k="py"]{--c:var(--py)} .row[data-k="ggb"]{--c:var(--ggb)}
+.code{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--led);letter-spacing:.06em}
+.dest{min-width:0}
+.dest b{display:block;font-family:var(--f-display);font-weight:400;font-size:20px;line-height:1.25;color:var(--c)}
+.dest span{font-size:13px;color:var(--board-dim)}
+.cell{font-size:14px;min-width:0}
+.cell small{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--board-dim);text-transform:uppercase}
+.acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;font-size:14px;font-weight:500;text-decoration:none;border:1.5px solid var(--c);white-space:nowrap}
+.btn.go{background:var(--c);color:var(--board)}
+.btn.go:hover{filter:brightness(1.1)}
+.btn.src{color:var(--board-ink);border-color:var(--board-rule)}
+.btn.src:hover{border-color:var(--board-dim)}
+.btn:focus-visible{outline:2px solid var(--led);outline-offset:2px}
+@media (max-width:760px){
+  .row{grid-template-columns:52px minmax(0,1fr);gap:6px 12px}
+  .row .cell,.row .acts{grid-column:2}
+  .acts{justify-content:flex-start;padding-top:4px}
+}
 
-.islands{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-@media (max-width:720px){.islands{grid-template-columns:1fr}}
-.card{--c:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:20px;display:grid;gap:12px;align-content:start;min-width:0;position:relative}
-.card[data-k="scratch"]{--c:var(--scratch)} .card[data-k="ggb"]{--c:var(--ggb)}
-.card[data-k="aia"]{--c:var(--aia)} .card[data-k="py"]{--c:var(--py)}
-.card-top{display:flex;align-items:center;gap:12px}
-.badge{flex:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:grid;place-items:center;font-family:var(--f-mono);font-weight:500;font-size:13px}
-.card h3{font-family:var(--f-display);font-weight:400;font-size:24px;margin:0;line-height:1.2;color:var(--c)}
-.card .tool{font-size:13px;color:var(--muted)}
-.card p{margin:0}
-dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}
-dt{color:var(--muted);white-space:nowrap}
-dd{margin:0;min-width:0}
-.links{display:flex;flex-wrap:wrap;gap:8px;padding-top:4px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-size:14px;text-decoration:none;font-weight:500;border:1.5px solid var(--c);transition:background .15s,color .15s}
-.btn.primary{background:var(--c);color:var(--paper)}
-.btn.primary:hover{filter:brightness(1.08)}
-.btn.ghost{color:var(--c);background:transparent}
-.btn.ghost:hover{background:color-mix(in srgb,var(--c) 12%,transparent)}
-.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-.url{font-family:var(--f-mono);font-size:12px;color:var(--muted);overflow-wrap:anywhere}
-
-table{width:100%;border-collapse:collapse;font-size:14px;background:var(--paper)}
-.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:6px}
-th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
-th{font-weight:500;color:var(--muted);font-size:13px;white-space:nowrap}
-tr:last-child td{border-bottom:none}
-td .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
-
+/* ---------- notes ---------- */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.note{background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;min-width:0}
+.note h3{margin:0 0 4px;font-family:var(--f-display);font-weight:400;font-size:18px}
+.note p{margin:0;color:var(--muted);font-size:14px}
 footer{font-size:13px;color:var(--muted)}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+footer a{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){.flow .route,.sweep{animation:none}*{transition:none!important}}
 </style>
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Simi · Teaching Archipelago · 4 islands</div>
-    <h1>Simi的教學群島整理</h1>
-    <p class="lede">四座自學網站，一張海圖。從積木出發，一路航向文字程式；想用圖形學代數的，走數學支線到 GGB 數學島。</p>
+    <div class="eyebrow">Home Base · 4 Routes · 4 Islands</div>
+    <h1>Simi的教學群島基地站</h1>
+    <p class="lede">所有教學島都從這裡出航。點地圖上的島，或從下方出航看板選一條航線，直接登島學習。</p>
   </header>
 
-  <figure class="chart" style="margin:0">
-    <svg viewBox="0 0 1000 340" role="img" aria-label="四座教學島的海圖與建議航線">
+  <figure class="map flow" id="map" style="margin:0">
+    <svg viewBox="0 0 1000 580" role="group" aria-label="基地站與四座教學島的航線圖">
       <defs>
-        <pattern id="waves" width="40" height="16" patternUnits="userSpaceOnUse">
-          <path d="M0 8 q10 -6 20 0 t20 0" fill="none" stroke="var(--rule)" stroke-width="1"/>
-        </pattern>
+        <radialGradient id="sweepGrad" cx="0" cy="0" r="1">
+          <stop offset="0" stop-color="var(--base)" stop-opacity=".35"/>
+          <stop offset="1" stop-color="var(--base)" stop-opacity="0"/>
+        </radialGradient>
       </defs>
-      <rect width="1000" height="340" fill="url(#waves)"/>
-      <!-- programming route -->
-      <path d="M170 210 C 280 120, 380 110, 480 160 S 680 250, 820 140" fill="none" stroke="var(--route)" stroke-width="2.5" stroke-dasharray="8 7"/>
-      <!-- math branch -->
-      <path d="M200 225 C 260 300, 380 310, 470 285" fill="none" stroke="var(--ggb)" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>
+      <!-- radar rings -->
+      <circle class="ring" cx="500" cy="290" r="90"/>
+      <circle class="ring" cx="500" cy="290" r="180"/>
+      <circle class="ring" cx="500" cy="290" r="270"/>
+      <line class="ring" x1="500" y1="10" x2="500" y2="570"/>
+      <line class="ring" x1="40" y1="290" x2="960" y2="290"/>
+      <path class="sweep" d="M500 290 L500 20 A270 270 0 0 1 690 99 Z" fill="url(#sweepGrad)"/>
 
-      <!-- Scratch -->
+      <!-- routes from base -->
+      <path class="route scratch" stroke="var(--scratch)" d="M470 265 C 400 200, 300 180, 225 150"/>
+      <path class="route aia" stroke="var(--aia)" d="M530 265 C 600 200, 700 180, 775 150"/>
+      <path class="route py" stroke="var(--py)" d="M530 315 C 600 380, 700 400, 775 425"/>
+      <path class="route ggb" stroke="var(--ggb)" d="M470 315 C 400 380, 300 400, 225 425"/>
+
+      <!-- base -->
       <g>
-        <path d="M110 205 q20 -50 70 -45 q50 5 55 40 q5 40 -60 45 q-70 5 -65 -40z" fill="var(--scratch)" opacity=".85"/>
-        <text x="172" y="135" text-anchor="middle" font-size="22">Scratch 積木群島</text>
-        <text x="172" y="268" text-anchor="middle" class="small">起點 · 7 年級</text>
+        <circle cx="500" cy="290" r="44" fill="var(--paper)" stroke="var(--base)" stroke-width="3"/>
+        <path d="M500 262 l22 13 v26 l-22 13 l-22 -13 v-26z" fill="var(--base)"/>
+        <text x="500" y="296" text-anchor="middle" font-size="15" style="fill:var(--paper)">基地</text>
+        <text x="500" y="360" text-anchor="middle" class="mono">HOME BASE</text>
       </g>
-      <!-- App Inventor -->
-      <g>
-        <path d="M430 160 q15 -40 60 -35 q45 5 45 35 q0 35 -55 38 q-55 2 -50 -38z" fill="var(--aia)" opacity=".85"/>
-        <text x="484" y="105" text-anchor="middle" font-size="22">App Inventor 教學島</text>
-      </g>
-      <!-- Python sky island -->
-      <g>
-        <path d="M770 140 q10 -35 55 -32 q45 3 50 32 q0 12 -20 14 l-30 40 l-25 -38 q-32 -2 -30 -16z" fill="var(--py)" opacity=".85"/>
-        <text x="822" y="85" text-anchor="middle" font-size="22">Python 教學島</text>
-        <text x="822" y="220" text-anchor="middle" class="small">天空之城 · 浮空島</text>
-      </g>
-      <!-- GGB -->
-      <g>
-        <path d="M470 290 q10 -32 55 -30 q48 3 50 28 q2 28 -55 30 q-55 2 -50 -28z" fill="var(--ggb)" opacity=".85"/>
-        <text x="600" y="295" font-size="22">GGB 數學島</text>
-      </g>
-      <!-- compass -->
-      <g transform="translate(935 270)">
-        <circle r="26" fill="none" stroke="var(--muted)" stroke-width="1"/>
-        <path d="M0 -24 L6 0 L0 24 L-6 0z" fill="var(--route)" opacity=".8"/>
-        <text y="-32" text-anchor="middle" class="small">N</text>
-      </g>
+
+      <!-- Scratch NW -->
+      <a class="isle" data-k="scratch" href="https://ldjh-scratch-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 Scratch 積木群島">
+        <circle class="halo" cx="165" cy="140" r="78" stroke="var(--scratch)"/>
+        <g class="land">
+          <path d="M105 140 q14 -48 64 -44 q52 4 58 38 q6 40 -60 46 q-68 6 -62 -40z" fill="var(--scratch)"/>
+          <path d="M140 150 q10 -16 26 -10 q14 -18 30 -4" fill="none" stroke="var(--paper)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+        </g>
+        <text x="165" y="68" text-anchor="middle" font-size="26">Scratch 積木群島</text>
+        <text x="165" y="222" text-anchor="middle" class="mono">A1 · 積木入門</text>
+      </a>
+
+      <!-- App Inventor NE -->
+      <a class="isle" data-k="aia" href="https://ldjh-appinventor-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 App Inventor 教學島">
+        <circle class="halo" cx="835" cy="140" r="78" stroke="var(--aia)"/>
+        <g class="land">
+          <path d="M775 140 q16 -46 62 -42 q50 4 56 36 q4 42 -58 46 q-66 4 -60 -40z" fill="var(--aia)"/>
+          <rect x="822" y="118" width="24" height="40" rx="5" fill="none" stroke="var(--paper)" stroke-width="3" opacity=".75"/>
+        </g>
+        <text x="835" y="68" text-anchor="middle" font-size="26">App Inventor 教學島</text>
+        <text x="835" y="222" text-anchor="middle" class="mono">A2 · 手機 App</text>
+      </a>
+
+      <!-- Python SE (floating) -->
+      <a class="isle" data-k="py" href="https://ldjh-python-islands.vercel.app" target="_blank" rel="noopener" aria-label="前往 Python 教學島">
+        <circle class="halo" cx="835" cy="440" r="78" stroke="var(--py)"/>
+        <g class="land">
+          <path d="M775 430 q10 -38 58 -36 q50 2 58 34 q2 14 -22 16 l-34 44 l-28 -42 q-34 -2 -32 -16z" fill="var(--py)"/>
+          <text x="833" y="440" text-anchor="middle" font-size="22" style="fill:var(--paper);font-family:var(--f-mono)">&gt;_</text>
+        </g>
+        <text x="835" y="530" text-anchor="middle" font-size="26">Python 教學島</text>
+        <text x="835" y="556" text-anchor="middle" class="mono">A3 · 天空之城</text>
+      </a>
+
+      <!-- GGB SW -->
+      <a class="isle" data-k="ggb" href="https://ldjh-ggb-math-island.vercel.app" target="_blank" rel="noopener" aria-label="前往 GGB 數學島">
+        <circle class="halo" cx="165" cy="440" r="78" stroke="var(--ggb)"/>
+        <g class="land">
+          <path d="M105 440 q12 -46 62 -42 q52 4 58 36 q4 42 -58 46 q-68 4 -62 -40z" fill="var(--ggb)"/>
+          <path d="M140 460 L170 418 L200 460 Z" fill="none" stroke="var(--paper)" stroke-width="3" stroke-linejoin="round" opacity=".75"/>
+        </g>
+        <text x="165" y="530" text-anchor="middle" font-size="26">GGB 數學島</text>
+        <text x="165" y="556" text-anchor="middle" class="mono">B1 · 數學支線</text>
+      </a>
     </svg>
     <figcaption class="legend">
-      <span><i></i>程式航線：積木 → 手機 App → 文字程式</span>
-      <span><i class="solid"></i>數學支線：用 GeoGebra 從幾何學代數</span>
+      <span>程式航線 A1 → A2 → A3：積木 → 手機 App → 文字程式</span>
+      <span>數學支線 B1：用 GeoGebra 從幾何學代數</span>
     </figcaption>
   </figure>
 
-  <section style="display:grid;gap:16px">
-    <div class="section-head">
-      <h2>島嶼登錄</h2>
-      <p>依建議航行順序排列</p>
+  <section class="board" aria-labelledby="board-title">
+    <div class="board-head">
+      <h2 id="board-title">出航看板</h2>
+      <div class="clock" id="clock">基地時間 --:--</div>
     </div>
-    <div class="islands">
-
-      <article class="card" data-k="scratch">
-        <div class="card-top"><div class="badge">01</div>
-          <div><h3>Scratch 積木群島</h3><div class="tool">工具：Scratch</div></div></div>
-        <p>3D 跳島網站，每座小島對應一類 Scratch 積木，一島一島認識積木分類。</p>
-        <dl>
-          <dt>對象</dt><dd>7 年級，還沒學過文字程式語言</dd>
-          <dt>重點</dt><dd>只用 Scratch，不混入其他語言</dd>
-        </dl>
-        <div class="links">
-          <a class="btn primary" href="https://ldjh-scratch-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
-          <a class="btn ghost" href="https://github.com/similaitw/ldjh-scratch-islands" target="_blank" rel="noopener">GitHub</a>
+    <div class="rows">
+      <div class="row" data-k="scratch">
+        <div class="code">A1</div>
+        <div class="dest"><b>Scratch 積木群島</b><span>3D 跳島，一島學一類積木</span></div>
+        <div class="cell"><small>工具</small>Scratch</div>
+        <div class="cell"><small>對象</small>7 年級・還沒學過文字程式</div>
+        <div class="acts">
+          <a class="btn go" href="https://ldjh-scratch-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
+          <a class="btn src" href="https://github.com/similaitw/ldjh-scratch-islands" target="_blank" rel="noopener">原始碼</a>
         </div>
-        <div class="url">ldjh-scratch-islands.vercel.app</div>
-      </article>
-
-      <article class="card" data-k="aia">
-        <div class="card-top"><div class="badge">02</div>
-          <div><h3>App Inventor 教學島</h3><div class="tool">工具：MIT App Inventor</div></div></div>
-        <p>用積木做出手機 App。站內有模擬的 App Inventor 工作區，可以直接看積木怎麼拼，也能下載 .aia 範例檔匯入練習。</p>
-        <dl>
-          <dt>對象</dt><dd>學過 Scratch、想做手機 App 的學生</dd>
-          <dt>特色</dt><dd>模擬工作區 + 可下載 .aia 檔</dd>
-        </dl>
-        <div class="links">
-          <a class="btn primary" href="https://ldjh-appinventor-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
-          <a class="btn ghost" href="https://github.com/similaitw/ldjh-appinventor-islands" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="row" data-k="aia">
+        <div class="code">A2</div>
+        <div class="dest"><b>App Inventor 教學島</b><span>站內模擬工作區＋可下載 .aia 範例</span></div>
+        <div class="cell"><small>工具</small>MIT App Inventor</div>
+        <div class="cell"><small>對象</small>學過 Scratch、想做手機 App</div>
+        <div class="acts">
+          <a class="btn go" href="https://ldjh-appinventor-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
+          <a class="btn src" href="https://github.com/similaitw/ldjh-appinventor-islands" target="_blank" rel="noopener">原始碼</a>
         </div>
-        <div class="url">ldjh-appinventor-islands.vercel.app</div>
-      </article>
-
-      <article class="card" data-k="py">
-        <div class="card-top"><div class="badge">03</div>
-          <div><h3>Python 教學島</h3><div class="tool">工具：Python（瀏覽器內執行，Pyodide）</div></div></div>
-        <p>天空之城風格的浮空島，在瀏覽器裡直接寫、直接跑 Python，不用安裝任何軟體。</p>
-        <dl>
-          <dt>對象</dt><dd>任何想自學 Python 的人</dd>
-          <dt>特色</dt><dd>免安裝，打開網頁就能執行程式</dd>
-        </dl>
-        <div class="links">
-          <a class="btn primary" href="https://ldjh-python-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
-          <a class="btn ghost" href="https://github.com/similaitw/ldjh-python-islands" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="row" data-k="py">
+        <div class="code">A3</div>
+        <div class="dest"><b>Python 教學島</b><span>天空之城浮空島，瀏覽器內直接執行</span></div>
+        <div class="cell"><small>工具</small>Python（Pyodide，免安裝）</div>
+        <div class="cell"><small>對象</small>任何想自學 Python 的人</div>
+        <div class="acts">
+          <a class="btn go" href="https://ldjh-python-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
+          <a class="btn src" href="https://github.com/similaitw/ldjh-python-islands" target="_blank" rel="noopener">原始碼</a>
         </div>
-        <div class="url">ldjh-python-islands.vercel.app</div>
-      </article>
-
-      <article class="card" data-k="ggb">
-        <div class="card-top"><div class="badge">支線</div>
-          <div><h3>GGB 數學島</h3><div class="tool">工具：GeoGebra</div></div></div>
-        <p>透過幾何作圖理解代數，讓學生自己動手操作 GeoGebra、自主學習。</p>
-        <dl>
-          <dt>對象</dt><dd>國中資優班學生</dd>
-          <dt>重點</dt><dd>以幾何學代數，自學為主</dd>
-        </dl>
-        <div class="links">
-          <a class="btn primary" href="https://ldjh-ggb-math-island.vercel.app" target="_blank" rel="noopener">登島 →</a>
-          <a class="btn ghost" href="https://github.com/similaitw/ldjh-ggb-math-island" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <div class="row" data-k="ggb">
+        <div class="code">B1</div>
+        <div class="dest"><b>GGB 數學島</b><span>以幾何作圖理解代數，自學為主</span></div>
+        <div class="cell"><small>工具</small>GeoGebra</div>
+        <div class="cell"><small>對象</small>國中資優班</div>
+        <div class="acts">
+          <a class="btn go" href="https://ldjh-ggb-math-island.vercel.app" target="_blank" rel="noopener">登島 →</a>
+          <a class="btn src" href="https://github.com/similaitw/ldjh-ggb-math-island" target="_blank" rel="noopener">原始碼</a>
         </div>
-        <div class="url">ldjh-ggb-math-island.vercel.app</div>
-      </article>
-
+      </div>
     </div>
   </section>
 
-  <section style="display:grid;gap:12px">
-    <h2>一覽表</h2>
-    <div class="tbl">
-      <table>
-        <thead><tr><th>島嶼</th><th>工具</th><th>對象</th><th>網址</th><th>GitHub repo</th></tr></thead>
-        <tbody>
-          <tr><td><span class="dot" style="background:var(--scratch)"></span>Scratch 積木群島</td><td>Scratch</td><td>7 年級</td><td class="url">ldjh-scratch-islands.vercel.app</td><td class="url">similaitw/ldjh-scratch-islands</td></tr>
-          <tr><td><span class="dot" style="background:var(--aia)"></span>App Inventor 教學島</td><td>App Inventor</td><td>學過積木的學生</td><td class="url">ldjh-appinventor-islands.vercel.app</td><td class="url">similaitw/ldjh-appinventor-islands</td></tr>
-          <tr><td><span class="dot" style="background:var(--py)"></span>Python 教學島</td><td>Python</td><td>所有自學者</td><td class="url">ldjh-python-islands.vercel.app</td><td class="url">similaitw/ldjh-python-islands</td></tr>
-          <tr><td><span class="dot" style="background:var(--ggb)"></span>GGB 數學島</td><td>GeoGebra</td><td>國中資優班</td><td class="url">ldjh-ggb-math-island.vercel.app</td><td class="url">similaitw/ldjh-ggb-math-island</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <section class="notes">
+    <div class="note"><h3>第一次來？</h3><p>從 A1 Scratch 積木群島出發，熟悉積木後再搭 A2 做手機 App，最後到 A3 學 Python。</p></div>
+    <div class="note"><h3>想學數學？</h3><p>B1 GGB 數學島是獨立的支線，不用先走程式航線，直接出發就可以。</p></div>
+    <div class="note"><h3>迷路了？</h3><p>把這個基地站加入書籤，任何時候都能回到這裡重新選航線。</p></div>
   </section>
 
-  <footer>四座島都部署在 Vercel，原始碼放在 GitHub similaitw 帳號下。</footer>
+  <footer>基地站網址：<a href="https://similaitw.github.io/simi-teaching-islands/" target="_blank" rel="noopener">similaitw.github.io/simi-teaching-islands</a>・四座島部署於 Vercel，原始碼在 GitHub similaitw。</footer>
 </div>
+
+<script>
+(function(){
+  var map=document.getElementById('map');
+  var rows=document.querySelectorAll('.row');
+  function light(k){
+    if(k){map.setAttribute('data-active',k)}else{map.removeAttribute('data-active')}
+    rows.forEach(function(r){r.classList.toggle('lit',r.getAttribute('data-k')===k)});
+  }
+  document.querySelectorAll('.isle,.row').forEach(function(el){
+    var k=el.getAttribute('data-k');
+    el.addEventListener('mouseenter',function(){light(k)});
+    el.addEventListener('mouseleave',function(){light(null)});
+    el.addEventListener('focusin',function(){light(k)});
+    el.addEventListener('focusout',function(){light(null)});
+  });
+  var clock=document.getElementById('clock');
+  function tick(){
+    var d=new Date();
+    clock.textContent='基地時間 '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+  tick(); setInterval(tick,15000);
+})();
+</script>
 
 </body>
 </html>
