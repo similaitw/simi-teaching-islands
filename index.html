@@ -329,9 +329,6 @@ footer a{color:var(--ink)}
   var mast=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.08,.1,1.6,6),rockMat));mast.position.y=.8;radar.add(mast);
   var dish=shadowy(new THREE.Mesh(new THREE.SphereGeometry(.8,10,6,0,Math.PI*2,0,Math.PI/2.4),std(0xdfe6e6,{side:THREE.DoubleSide})));
   dish.rotation.x=-1.1;dish.position.y=1.7;var dishPivot=new THREE.Group();dishPivot.add(dish);radar.add(dishPivot);
-  var flagPole=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,2.4,5),rockMat));flagPole.position.set(-2.3,deck.position.y+1.3,-1);base.add(flagPole);
-  var flag=new THREE.Mesh(new THREE.PlaneGeometry(1.1,.65,4,1),std(0xc0533a,{side:THREE.DoubleSide}));flag.position.set(-1.72,deck.position.y+2.15,-1);base.add(flag);
-  var flagBase=flag.geometry.attributes.position.array.slice();
   var dockA=shadowy(new THREE.Mesh(new THREE.BoxGeometry(1.2,.25,3.2),std(0x8a6a4a)));dockA.position.set(0,.55,5.6);base.add(dockA);
   base.userData.key='base';
 
@@ -494,7 +491,6 @@ footer a{color:var(--ink)}
     var t=clockT.getElapsedTime(), anim=!reduce;
     if(anim){waves(t);
       dishPivot.rotation.y=t*1.2;beamPivot.rotation.y=t*.8;
-      var fp=flag.geometry.attributes.position;for(var i=0;i<fp.count;i++){var x=flagBase[i*3];fp.array[i*3+2]=Math.sin(x*4+t*5)*.08*(x+.55)}fp.needsUpdate=true;
       var py=islandGroups.py;py.position.y=py.userData.home.y+Math.sin(t*.8)*.35;
       py.children.forEach(function(c){if(c.userData.float!==undefined)c.position.y+=Math.sin(t*1.3+c.userData.float)*.004});
       if(islandGroups.ggb.userData.spin)islandGroups.ggb.userData.spin.rotation.y=t*1.2;
