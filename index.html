@@ -15,7 +15,7 @@
 :root{
   --sea:#e4eff1; --sea-line:#cddfe3; --paper:#fbfdfd; --ink:#17323a; --muted:#56717a; --rule:#d2e1e4;
   --base:#c0533a;
-  --scratch:#d9821a; --ggb:#3b8756; --aia:#2c82b4; --py:#7657b2;
+  --scratch:#d9821a; --ggb:#3b8756; --aia:#2c82b4; --py:#7657b2; --calc:#a87a1e;
   --sky:#cfe6ee; --ocean:#4f9fb5; --sand:#e9d6a8;
   --board:#14262c; --board-ink:#e8f1ee; --board-dim:#86a3a8; --board-rule:#26414a; --led:#f3c24b;
   --f-display:"Huninn","Noto Sans TC",system-ui,sans-serif;
@@ -24,12 +24,12 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
-  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0; --calc:#e3c27a;
   --sky:#0b1a24; --ocean:#16475a; --sand:#b9a77c;
   --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}}
 :root[data-theme="dark"]{
   --sea:#0e1f25; --sea-line:#183139; --paper:#12262d; --ink:#e3eef0; --muted:#93adb4; --rule:#23404a;
-  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0;
+  --base:#e2876f; --scratch:#f0a447; --ggb:#6cbf88; --aia:#5fb0de; --py:#a68be0; --calc:#e3c27a;
   --sky:#0b1a24; --ocean:#16475a; --sand:#b9a77c;
   --board:#0a161a; --board-ink:#e8f1ee; --board-dim:#7f9a9f; --board-rule:#1f3840; --led:#f3c24b; color-scheme:dark}
 
@@ -58,7 +58,7 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);l
 .tag:hover i,.tag.on i{color:var(--paper)}
 .tag:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tag[data-k="scratch"]{--c:var(--scratch)} .tag[data-k="aia"]{--c:var(--aia)}
-.tag[data-k="py"]{--c:var(--py)} .tag[data-k="ggb"]{--c:var(--ggb)}
+.tag[data-k="py"]{--c:var(--py)} .tag[data-k="ggb"]{--c:var(--ggb)} .tag[data-k="calc"]{--c:var(--calc)}
 
 .panel{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:12px;width:min(340px,calc(100% - 24px));background:var(--paper);
   border:1px solid var(--rule);border-left:4px solid var(--c,var(--base));border-radius:8px;padding:14px 16px;display:grid;gap:8px;box-shadow:0 6px 24px rgb(0 0 0 / .15)}
@@ -87,7 +87,7 @@ h1{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,6vw,50px);l
 .row:last-child{border-bottom:none}
 .row.lit{background:color-mix(in srgb,var(--c) 18%,transparent)}
 .row[data-k="scratch"]{--c:var(--scratch)} .row[data-k="aia"]{--c:var(--aia)}
-.row[data-k="py"]{--c:var(--py)} .row[data-k="ggb"]{--c:var(--ggb)}
+.row[data-k="py"]{--c:var(--py)} .row[data-k="ggb"]{--c:var(--ggb)} .row[data-k="calc"]{--c:var(--calc)}
 .code{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--led);letter-spacing:.06em}
 .dest{min-width:0}
 .dest b{display:block;font-family:var(--f-display);font-weight:400;font-size:20px;line-height:1.25;color:var(--c)}
@@ -118,7 +118,7 @@ footer a{color:var(--ink)}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Home Base · 4 Routes · 4 Islands</div>
+    <div class="eyebrow">Home Base · 5 Routes · 5 Islands</div>
     <h1>Simi的教學群島基地站</h1>
     <p class="lede">所有教學島都從這裡出航。拖曳轉動海圖，點一座島看介紹，再按「登島」出發。</p>
   </header>
@@ -130,7 +130,7 @@ footer a{color:var(--ink)}
       <div class="panel" id="panel">
         <div class="p-code" id="pCode">HOME BASE</div>
         <h3 id="pName">基地站</h3>
-        <p id="pDesc">四條航線從這裡出發。點任一座島，看它教什麼、適合誰。</p>
+        <p id="pDesc">五條航線從這裡出發。點任一座島，看它教什麼、適合誰。</p>
         <div class="p-acts" id="pActs"></div>
       </div>
     </div>
@@ -151,6 +151,16 @@ footer a{color:var(--ink)}
         <div class="acts">
           <a class="btn go" href="https://ldjh-scratch-islands.vercel.app" target="_blank" rel="noopener">登島 →</a>
           <a class="btn src" href="https://github.com/similaitw/ldjh-scratch-islands" target="_blank" rel="noopener">原始碼</a>
+        </div>
+      </div>
+      <div class="row" data-k="calc">
+        <div class="code">C1</div>
+        <div class="dest"><b>算衍修仙錄：Scratch 計算篇</b><span>3D 仙俠／魔法學院 RPG，站內直接拼積木、自動試煉</span></div>
+        <div class="cell"><small>工具</small>Scratch（站內積木編輯區）</div>
+        <div class="cell"><small>對象</small>會 Scratch 基本操作、準備貓咪盃與縣賽</div>
+        <div class="acts">
+          <a class="btn go" href="https://ldjh-scratch-computation.vercel.app" target="_blank" rel="noopener">登島 →</a>
+          <a class="btn src" href="https://github.com/similaitw/ldjh-scratch-computation" target="_blank" rel="noopener">原始碼</a>
         </div>
       </div>
       <div class="row" data-k="aia">
@@ -188,11 +198,12 @@ footer a{color:var(--ink)}
 
   <section class="notes">
     <div class="note"><h3>第一次來？</h3><p>從 A1 Scratch 積木群島出發，熟悉積木後再搭 A2 做手機 App，最後到 A3 學 Python。</p></div>
+    <div class="note"><h3>準備程式競賽？</h3><p>走完 A1 Scratch 積木群島後，搭 C1 算衍修仙錄練計算題，題型對準全國貓咪盃與宜蘭縣資訊科技競賽。</p></div>
     <div class="note"><h3>想學數學？</h3><p>B1 GGB 數學島是獨立的支線，不用先走程式航線，直接出發就可以。</p></div>
     <div class="note"><h3>迷路了？</h3><p>把這個基地站加入書籤，任何時候都能回到這裡重新選航線。</p></div>
   </section>
 
-  <footer>基地站網址：<a href="https://similaitw.github.io/simi-teaching-islands/" target="_blank" rel="noopener">similaitw.github.io/simi-teaching-islands</a>・四座島部署於 Vercel，原始碼在 GitHub similaitw。</footer>
+  <footer>基地站網址：<a href="https://similaitw.github.io/simi-teaching-islands/" target="_blank" rel="noopener">similaitw.github.io/simi-teaching-islands</a>・五座島部署於 Vercel，原始碼在 GitHub similaitw。</footer>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -203,9 +214,10 @@ footer a{color:var(--ink)}
     scratch:{code:'A1 · 程式航線',name:'Scratch 積木群島',desc:'3D 跳島，一島學一類積木。給 7 年級、還沒學過文字程式的學生。',url:'https://ldjh-scratch-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-scratch-islands',pos:[-13,0,-9]},
     aia:{code:'A2 · 程式航線',name:'App Inventor 教學島',desc:'用積木做手機 App。站內有模擬工作區，也能下載 .aia 範例匯入練習。',url:'https://ldjh-appinventor-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-appinventor-islands',pos:[13,0,-9]},
     py:{code:'A3 · 程式航線',name:'Python 教學島',desc:'天空之城風格的浮空島。在瀏覽器裡直接寫、直接跑 Python，免安裝。',url:'https://ldjh-python-islands.vercel.app',repo:'https://github.com/similaitw/ldjh-python-islands',pos:[13,4,9]},
+    calc:{code:'C1 · 競賽航線',name:'算衍修仙錄：Scratch 計算篇',desc:'仙俠／魔法學院雙世界的 RPG 闖關。站內直接拼 Scratch 積木並自動試煉，練貓咪盃計算題型。',url:'https://ldjh-scratch-computation.vercel.app',repo:'https://github.com/similaitw/ldjh-scratch-computation',pos:[0,5.5,-23]},
     ggb:{code:'B1 · 數學支線',name:'GGB 數學島',desc:'用 GeoGebra 透過幾何作圖理解代數，給國中資優班自學。',url:'https://ldjh-ggb-math-island.vercel.app',repo:'https://github.com/similaitw/ldjh-ggb-math-island',pos:[-13,0,9]}
   };
-  var KEYS=['scratch','aia','py','ggb'];
+  var KEYS=['scratch','aia','py','ggb','calc'];var FLOAT={py:1,calc:1};
   var stage=document.getElementById('stage'), tagsEl=document.getElementById('tags');
   var rows=document.querySelectorAll('.row');
   var pCode=document.getElementById('pCode'),pName=document.getElementById('pName'),pDesc=document.getElementById('pDesc'),pActs=document.getElementById('pActs'),panel=document.getElementById('panel');
@@ -224,7 +236,7 @@ footer a{color:var(--ink)}
   function lightRows(k){rows.forEach(function(r){r.classList.toggle('lit',r.getAttribute('data-k')===k)})}
   function showPanel(k){
     pActs.innerHTML='';
-    if(!k){panel.style.removeProperty('--c');pCode.textContent='HOME BASE';pName.textContent='基地站';pDesc.textContent='四條航線從這裡出發。點任一座島，看它教什麼、適合誰。';return}
+    if(!k){panel.style.removeProperty('--c');pCode.textContent='HOME BASE';pName.textContent='基地站';pDesc.textContent='五條航線從這裡出發。點任一座島，看它教什麼、適合誰。';return}
     var d=ISLANDS[k];
     panel.style.setProperty('--c','var(--'+k+')');
     pCode.textContent=d.code;pName.textContent=d.name;pDesc.textContent=d.desc;
@@ -245,7 +257,7 @@ footer a{color:var(--ink)}
   }
   mkTag('base','基地站','HQ');
   mkTag('scratch','Scratch 積木群島','A1');mkTag('aia','App Inventor 教學島','A2');
-  mkTag('py','Python 教學島','A3');mkTag('ggb','GGB 數學島','B1');
+  mkTag('py','Python 教學島','A3');mkTag('ggb','GGB 數學島','B1');mkTag('calc','算衍修仙錄','C1');
 
   if(!window.THREE){fail();return}
   var renderer;
@@ -379,7 +391,27 @@ footer a{color:var(--ink)}
       var l=new THREE.Line(geo,axMat);l.position.set(-1.9,y+.02,1.4);g.add(l)});
     return g;
   }
-  var makers={scratch:mkScratch,aia:mkAia,py:mkPy,ggb:mkGgb};
+  function mkCalc(){
+    var g=new THREE.Group();
+    var under=shadowy(new THREE.Mesh(new THREE.ConeGeometry(3.2,4.6,7),darkRock));under.rotation.x=Math.PI;under.position.y=-2.3;g.add(under);
+    var top=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(3.1,3.2,.6,7),std(0xa87a1e)));top.position.y=.3;g.add(top);
+    var grass=shadowy(new THREE.Mesh(new THREE.CylinderGeometry(2.8,3.1,.3,7),std(0x5e9e6c)));grass.position.y=.75;g.add(grass);
+    var y=.9;
+    for(var k=0;k<3;k++){var w=1.8-k*.45;
+      var wall=shadowy(new THREE.Mesh(new THREE.BoxGeometry(w,.7,w),std(0xefe7d6)));wall.position.set(-.5,y+.35,-.3);g.add(wall);
+      var rf=shadowy(new THREE.Mesh(new THREE.ConeGeometry((w+.6)*.78,.55,4),std(0x2a4f57)));rf.rotation.y=Math.PI/4;rf.position.set(-.5,y+.97,-.3);g.add(rf);y+=1.25}
+    var spire=new THREE.Mesh(new THREE.ConeGeometry(.1,.6,6),std(0xd9b45a));spire.position.set(-.5,y+.2,-.3);g.add(spire);
+    var sword=new THREE.Group();
+    sword.add(new THREE.Mesh(new THREE.BoxGeometry(.18,.05,2.2),std(0xdfe8ee,{metalness:.6,roughness:.3,emissive:0x2f7f8f,emissiveIntensity:.4})));
+    var guard=new THREE.Mesh(new THREE.BoxGeometry(.55,.08,.1),std(0xd9b45a));guard.position.z=-.95;sword.add(guard);
+    sword.position.set(1.6,2.4,.9);sword.rotation.y=.6;g.add(sword);g.userData.sword=sword;
+    var ring=new THREE.Mesh(new THREE.TorusGeometry(3.35,.06,6,40),std(0x6fe0bf,{emissive:0x2ad1a8,emissiveIntensity:.8}));ring.rotation.x=Math.PI/2;ring.position.y=.62;g.add(ring);
+    var t1=tree(1.2);t1.position.set(1.7,.9,-1.3);g.add(t1);
+    for(var i=0;i<3;i++){var r=shadowy(new THREE.Mesh(new THREE.DodecahedronGeometry(.4+Math.random()*.3,0),darkRock));var a=i*2.1+.5;
+      r.position.set(Math.cos(a)*4.3,-1.4-i*.6,Math.sin(a)*4.3);r.userData.float=i;g.add(r)}
+    g.userData.topY=.9;return g;
+  }
+  var makers={scratch:mkScratch,aia:mkAia,py:mkPy,ggb:mkGgb,calc:mkCalc};
   KEYS.forEach(function(k){
     var g=makers[k]();var p=ISLANDS[k].pos;g.position.set(p[0],p[1],p[2]);g.userData.key=k;g.userData.home=g.position.clone();
     scene.add(g);islandGroups[k]=g;
@@ -392,9 +424,9 @@ footer a{color:var(--ink)}
     var p=ISLANDS[k].pos, end=new THREE.Vector3(p[0],0,p[2]);
     var dir=end.clone().normalize();
     var a=dir.clone().multiplyScalar(5.6);a.y=.6;
-    var b=end.clone().sub(dir.clone().multiplyScalar(4.8));b.y=k==='py'?p[1]-.2:.6;
-    var mid=a.clone().lerp(b,.5);mid.y=k==='py'?3.6:1.4;
-    var side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(k==='aia'||k==='ggb'?-1.6:1.6);mid.add(side);
+    var b=end.clone().sub(dir.clone().multiplyScalar(4.8));b.y=FLOAT[k]?p[1]-.2:.6;
+    var mid=a.clone().lerp(b,.5);mid.y=FLOAT[k]?Math.max(3.6,p[1]*.6+2):1.4;
+    var side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(k==='aia'||k==='ggb'?-1.6:k==='calc'?0:1.6);mid.add(side);
     var curve=new THREE.QuadraticBezierCurve3(a,mid,b);
     var geo=new THREE.BufferGeometry().setFromPoints(curve.getPoints(60));
     var mat=new THREE.LineDashedMaterial({color:0xffffff,dashSize:.7,gapSize:.5,transparent:true,opacity:.75});
@@ -477,7 +509,7 @@ footer a{color:var(--ink)}
   function placeTags(){
     var w=stage.clientWidth,h=stage.clientHeight;
     Object.keys(tags).forEach(function(k){
-      var g=islandGroups[k];tmp.copy(g.position);tmp.y+=(k==='base'?10.4:k==='py'?6.2:5.4);
+      var g=islandGroups[k];tmp.copy(g.position);tmp.y+=(k==='base'?10.4:k==='py'?6.2:k==='calc'?5.9:5.4);
       tmp.project(camera);var el=tags[k];
       if(tmp.z>1){el.style.visibility='hidden';return}
       el.style.visibility='visible';
@@ -494,13 +526,15 @@ footer a{color:var(--ink)}
       var py=islandGroups.py;py.position.y=py.userData.home.y+Math.sin(t*.8)*.35;
       py.children.forEach(function(c){if(c.userData.float!==undefined)c.position.y+=Math.sin(t*1.3+c.userData.float)*.004});
       if(islandGroups.ggb.userData.spin)islandGroups.ggb.userData.spin.rotation.y=t*1.2;
+      var cg=islandGroups.calc;cg.position.y=cg.userData.home.y+Math.sin(t*.7+1)*.3;
+      if(cg.userData.sword){cg.userData.sword.position.y=2.4+Math.sin(t*1.6)*.15;cg.userData.sword.rotation.y=.6+Math.sin(t*.5)*.3}
     }
     KEYS.forEach(function(k){
       var R=routes[k], on=(hovered===k||selected===k), dim=(hovered||selected)&&!on;
       R.mat.opacity=dim?.25:on?1:.75;
       R.boats.forEach(function(b){
         var u=anim?((t*.06+b.userData.off)%1):(.3+b.userData.off*.4);if(b.userData.dir<0)u=1-u;
-        var p=R.curve.getPointAt(u);b.position.copy(p);if(k!=='py')b.position.y=Math.max(p.y,.35)+(anim?Math.sin(t*2+u*9)*.06:0);
+        var p=R.curve.getPointAt(u);b.position.copy(p);if(!FLOAT[k])b.position.y=Math.max(p.y,.35)+(anim?Math.sin(t*2+u*9)*.06:0);
         var tan=R.curve.getTangentAt(u);if(b.userData.dir<0)tan.negate();b.rotation.y=Math.atan2(tan.x,tan.z);
         b.visible=!dim;
       });
