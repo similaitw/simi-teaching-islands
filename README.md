@@ -11,5 +11,5 @@
 | Scratch 積木群島 | Scratch | [ldjh-scratch-islands.vercel.app](https://ldjh-scratch-islands.vercel.app) |
 | App Inventor 教學島 | App Inventor | [ldjh-appinventor-islands.vercel.app](https://ldjh-appinventor-islands.vercel.app) |
 | Python 教學島 | Python | [ldjh-python-islands.vercel.app](https://ldjh-python-islands.vercel.app) |
-| 算衍修仙錄：Scratch 計算篇 | Scratch | [ldjh-scratch-computation.vercel.app](https://ldjh-scratch-computation.vercel.app) |
+| 算衍修仙錄：積木計算篇（宜蘭競賽版） | Blockly（同宜蘭競賽平台） | [ldjh-scratch-computation.vercel.app](https://ldjh-scratch-computation.vercel.app) |
 | GGB 數學島 | GeoGebra | [ldjh-ggb-math-island.vercel.app](https://ldjh-ggb-math-island.vercel.app) |
