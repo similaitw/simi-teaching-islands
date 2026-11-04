@@ -14,4 +14,5 @@
 | 進階區 | Arduino 機械星系（7 顆星球・21 關） | Arduino（線上模擬） | [ldjh-arduino-islands.vercel.app](https://ldjh-arduino-islands.vercel.app) |
 | 進階區 | GGB 數學島 | GeoGebra | [ldjh-ggb-math-island.vercel.app](https://ldjh-ggb-math-island.vercel.app) |
 | 競賽區 | 算衍修仙錄：積木計算篇（宜蘭競賽版） | Blockly（同宜蘭競賽平台） | [ldjh-scratch-computation.vercel.app](https://ldjh-scratch-computation.vercel.app) |
+| 競賽區 | Blockly 競賽技巧道場（四館二十招） | Blockly（同宜蘭競賽平台） | [ldjh-blockly-skills.vercel.app](https://ldjh-blockly-skills.vercel.app) |
 | 競賽區 | 資訊科技競賽題目詳解（課堂用，需登入） | Blockly（同宜蘭競賽平台） | [ict-blockly-solutions.vercel.app](https://ict-blockly-solutions.vercel.app) |

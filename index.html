@@ -128,7 +128,7 @@ footer a{color:var(--ink)}
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Home Base · 4 Zones · 7 Islands</div>
+    <div class="eyebrow">Home Base · 4 Zones · 8 Islands</div>
     <h1>Simi的教學群島基地站</h1>
     <p class="lede">所有教學島都從這裡出航，分成四個海域。先選一區，再挑一座島登島學習；拖曳可以轉動海圖。</p>
   </header>
@@ -137,7 +137,7 @@ footer a{color:var(--ink)}
     <button type="button" class="zchip" data-z="block"><b>積木區</b><span>Scratch・App Inventor</span></button>
     <button type="button" class="zchip" data-z="code"><b>程式區</b><span>Python</span></button>
     <button type="button" class="zchip" data-z="adv"><b>進階區</b><span>Arduino・GeoGebra</span></button>
-    <button type="button" class="zchip" data-z="comp"><b>競賽區</b><span>算衍修仙錄・題目詳解</span></button>
+    <button type="button" class="zchip" data-z="comp"><b>競賽區</b><span>算衍修仙錄・技巧道場・題目詳解</span></button>
   </nav>
 
   <div class="stage-wrap">
@@ -164,7 +164,7 @@ footer a{color:var(--ink)}
 
   <section class="notes">
     <div class="note"><h3>第一次來？</h3><p>從積木區的 Scratch 積木群島出發，接著做 App Inventor 手機 App，再進程式區學 Python。</p></div>
-    <div class="note"><h3>準備比賽？</h3><p>走完積木區後，到競賽區的算衍修仙錄練計算題：積木、讀取方式和評分都和宜蘭縣資訊科技創意實作競賽平台一樣，再對照題目詳解。</p></div>
+    <div class="note"><h3>準備比賽？</h3><p>走完積木區後，到競賽區的算衍修仙錄練計算題，再到競賽技巧道場把累加、旗標、清單、拆位數這些常用招式一招一招練熟：積木、讀取方式和評分都和宜蘭縣資訊科技創意實作競賽平台一樣。</p></div>
     <div class="note"><h3>題目詳解</h3><p>資訊科技競賽題目詳解是課堂用的，點進去需要登入才能看。</p></div>
   </section>
 
@@ -179,7 +179,7 @@ footer a{color:var(--ink)}
     block:{code:'Z1',name:'積木區',desc:'用拼積木的方式學程式，從動畫遊戲做到手機 App。',center:[-15,-14]},
     code:{code:'Z2',name:'程式區',desc:'從積木走向文字程式，打開網頁就能寫 Python。',center:[15,-14]},
     adv:{code:'Z3',name:'進階區',desc:'結合硬體與數學：Arduino 電路模擬、GeoGebra 幾何代數。',center:[15,14]},
-    comp:{code:'Z4',name:'競賽區',desc:'為宜蘭縣資訊科技創意實作競賽做準備：分級闖關練習加上題目詳解。',center:[-15,14]}
+    comp:{code:'Z4',name:'競賽區',desc:'為宜蘭縣資訊科技創意實作競賽做準備：分級闖關、技巧專項訓練，加上題目詳解。',center:[-15,14]}
   };
   var ZKEYS=['block','code','adv','comp'];
   var ISLANDS=[
@@ -195,7 +195,9 @@ footer a{color:var(--ink)}
      url:'https://ldjh-ggb-math-island.vercel.app',repo:'https://github.com/similaitw/ldjh-ggb-math-island',pos:[19,0,10]},
     {k:'calc',z:'comp',code:'Z4-1',name:'算衍修仙錄：積木計算篇',sub:'仙俠／魔法學院 RPG 闖關，積木與競賽平台相同，自動評分',tool:'Blockly（與競賽平台相同）',who:'會積木基本操作、準備競賽的國中生',
      url:'https://ldjh-scratch-computation.vercel.app',repo:'https://github.com/similaitw/ldjh-scratch-computation',pos:[-19,0,10]},
-    {k:'sol',z:'comp',code:'Z4-2',name:'資訊科技競賽題目詳解',sub:'每題附排好的解答積木，課堂講解用',tool:'競賽平台 Blockly 積木',who:'教師課堂使用（需登入）',
+    {k:'dojo',z:'comp',code:'Z4-2',name:'Blockly 競賽技巧道場',sub:'四館二十招 60 題：每招講解＋三題連練，自動判題',tool:'Blockly（與競賽平台相同）',who:'準備競賽、想補強特定技巧的國中生',
+     url:'https://ldjh-blockly-skills.vercel.app',repo:'https://github.com/similaitw/ldjh-blockly-skills',pos:[-23,0,22]},
+    {k:'sol',z:'comp',code:'Z4-3',name:'資訊科技競賽題目詳解',sub:'每題附排好的解答積木，課堂講解用',tool:'競賽平台 Blockly 積木',who:'教師課堂使用（需登入）',
      url:'https://ict-blockly-solutions.vercel.app',repo:null,locked:true,pos:[-10,0,19]}
   ];
   var BY={};ISLANDS.forEach(function(d){BY[d.k]=d});
